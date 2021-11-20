@@ -1,0 +1,13 @@
+version: '3.5'
+services:
+  dev:
+    user: root
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - .:/app/
+    container_name: cql_evaluator_dev
+    working_dir: /app
+    environment:
+      LOGLEVEL: DEBUG
