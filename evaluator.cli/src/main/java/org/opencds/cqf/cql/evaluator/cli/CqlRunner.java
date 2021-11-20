@@ -48,7 +48,7 @@ public class CqlRunner {
     private Map<String, LibraryContentProvider> libraryContentProviderIndex = new HashMap<>();
     private Map<String, TerminologyProvider> terminologyProviderIndex = new HashMap<>();
 
-    public void runCql(String fhirVersion, List<LibraryParameter> libraries) {
+    public EvaluationResult runCql(String fhirVersion, List<LibraryParameter> libraries) {
         FhirVersionEnum fhirVersionEnum = FhirVersionEnum.valueOf(fhirVersion);
 
         CqlEvaluatorComponent cqlEvaluatorComponent = DaggerCqlEvaluatorComponent.builder()
@@ -102,47 +102,8 @@ public class CqlRunner {
                 contextParameter = Pair.of(library.context.contextName, library.context.contextValue);
             }
 
-            EvaluationResult result = evaluator.evaluate(identifier, contextParameter);
-
-            for (Map.Entry<String, Object> libraryEntry : result.expressionResults.entrySet()) {
-                System.out.println(libraryEntry.getKey() + "=" + tempConvert(libraryEntry.getValue()));
-            }
-
-            System.out.println();
+            return evaluator.evaluate(identifier, contextParameter);
         }
-    }
-    private String tempConvert(Object value) {
-        if (value == null) {
-            return "null";
-        }
-
-        String result = "";
-        if (value instanceof Iterable) {
-            result += "[";
-            Iterable<?> values = (Iterable<?>) value;
-            for (Object o : values) {
-
-                result += (tempConvert(o) + ", ");
-            }
-
-            if (result.length() > 1) {
-                result = result.substring(0, result.length() - 2);
-            }
-
-            result += "]";
-        } else if (value instanceof IBaseResource) {
-            IBaseResource resource = (IBaseResource) value;
-            result = resource.fhirType() + (resource.getIdElement() != null && resource.getIdElement().hasIdPart()
-                    ? "(id=" + resource.getIdElement().getIdPart() + ")"
-                    : "");
-        } else if (value instanceof IBase) {
-            result = ((IBase) value).fhirType();
-        } else if (value instanceof IBaseDatatype) {
-            result = ((IBaseDatatype) value).fhirType();
-        } else {
-            result = value.toString();
-        }
-
-        return result;
+        return null;
     }
 }

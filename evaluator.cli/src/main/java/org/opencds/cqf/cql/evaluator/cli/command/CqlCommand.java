@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.hl7.fhir.instance.model.api.IBase;
+import org.hl7.fhir.instance.model.api.IBaseDatatype;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.terminology.TerminologyProvider;
 import org.opencds.cqf.cql.evaluator.cli.CqlRunner;
 import org.opencds.cqf.cql.evaluator.cql2elm.content.LibraryContentProvider;
@@ -93,10 +97,48 @@ public class CqlCommand implements Callable<Integer> {
             libraryPropertyIn.context.contextValue = libraryParameter.context.contextValue;
             librariesIn.add(libraryPropertyIn);
         }
-        new CqlRunner().runCql(fhirVersion, librariesIn);
+        EvaluationResult result = new CqlRunner().runCql(fhirVersion, librariesIn);
+        for (Map.Entry<String, Object> libraryEntry : result.expressionResults.entrySet()) {
+            System.out.println(libraryEntry.getKey() + "=" + tempConvert(libraryEntry.getValue()));
+        }
+
+        System.out.println();
 
         return 0;
     }
 
+    private String tempConvert(Object value) {
+        if (value == null) {
+            return "null";
+        }
 
+        String result = "";
+        if (value instanceof Iterable) {
+            result += "[";
+            Iterable<?> values = (Iterable<?>) value;
+            for (Object o : values) {
+
+                result += (tempConvert(o) + ", ");
+            }
+
+            if (result.length() > 1) {
+                result = result.substring(0, result.length() - 2);
+            }
+
+            result += "]";
+        } else if (value instanceof IBaseResource) {
+            IBaseResource resource = (IBaseResource) value;
+            result = resource.fhirType() + (resource.getIdElement() != null && resource.getIdElement().hasIdPart()
+                    ? "(id=" + resource.getIdElement().getIdPart() + ")"
+                    : "");
+        } else if (value instanceof IBase) {
+            result = ((IBase) value).fhirType();
+        } else if (value instanceof IBaseDatatype) {
+            result = ((IBaseDatatype) value).fhirType();
+        } else {
+            result = value.toString();
+        }
+
+        return result;
+    }
 }
