@@ -1,0 +1,42 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: Publish to Nexus
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: [self-hosted,services]
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0s
+
+    - name: Configure AWS credentials - ${{ env.POOL_NAME }}
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.POOL_NAME }}-k8s-service-account-github-actions-runner
+        role-session-name: ${{ github.run_id }}
+        role-duration-seconds: 3600
+
+    - name: Get nexus password from aws ssm
+      uses: "marvinpinto/action-inject-ssm-secrets@latest"
+      with:
+        ssm_parameter: "/services/eks/nexus/ghar_token"
+        env_variable_name: "NEXUS_TOKEN"    
+permissions:
+      contents: read
+      packages: write
+    - run: mvn -B package --file pom.xml
+
+    - run: |
+        files=$(git diff --name-status HEAD~ | grep -e "^A" | grep -e "tgz$" | cut -c 3-)
+        for file in $files
+        do
+          curl -u github:$NEXUS_TOKEN --upload-file $file https://nexus.services.bwell.zone/repository/bwell/
+        done
