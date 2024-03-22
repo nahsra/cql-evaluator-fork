@@ -360,7 +360,6 @@ public class R4MeasureReportBuilder implements MeasureReportBuilder<Measure, Mea
                     // */
 
                     // String coreCategory = sdeCode
-                    // .substring(sdeCode.lastIndexOf('-') >= 0 ? sdeCode.lastIndexOf('-') + 1 : 0);
                     // for (DomainResource pt : subjectIds) {
                     // valueCoding = getExtensionCoding(pt, coreCategory, valueCode);
                     // if (valueCoding != null) {
@@ -456,7 +455,6 @@ public class R4MeasureReportBuilder implements MeasureReportBuilder<Measure, Mea
     }
 
     // protected Extension createCodingExtension(String url, String codeSystem,
-    // String code) {
     // Extension ext = new Extension().setUrl(url);
     // Coding coding = new Coding().setSystem(codeSystem).setCode(code);
     // ext.setValue(coding);
@@ -561,7 +559,6 @@ public class R4MeasureReportBuilder implements MeasureReportBuilder<Measure, Mea
     }
 
     // This is some hackery because most of these objects don't implement
-    // hashCode or equals, meaning it's hard to detect distinct values;
     class ValueWrapper {
         protected Object value;
 

@@ -352,7 +352,6 @@ public class Dstu3MeasureReportBuilder implements MeasureReportBuilder<Measure, 
                     // */
 
                     // String coreCategory = sdeCode
-                    // .substring(sdeCode.lastIndexOf('-') >= 0 ? sdeCode.lastIndexOf('-') + 1 : 0);
                     // for (DomainResource pt : subjectIds) {
                     // valueCoding = getExtensionCoding(pt, coreCategory, valueCode);
                     // if (valueCoding != null) {
@@ -423,7 +422,6 @@ public class Dstu3MeasureReportBuilder implements MeasureReportBuilder<Measure, 
     // * { "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
     // * "extension": [ { "url": "ombCategory", "valueCoding": { "system":
     // * "urn:oid:2.16.840.1.113883.6.238", "code": "2054-5", "display": "Black or
-    // * African American" } } ] }
     // */
 
     protected Coding getExtensionCoding(DomainResource patient, String coreCategory, String sdeCode) {
@@ -445,7 +443,6 @@ public class Dstu3MeasureReportBuilder implements MeasureReportBuilder<Measure, 
     }
 
     // protected Extension createCodingExtension(String url, String codeSystem,
-    // String code) {
     // Extension ext = new Extension().setUrl(url);
     // Coding coding = new Coding().setSystem(codeSystem).setCode(code);
     // ext.setValue(coding);
@@ -550,7 +547,6 @@ public class Dstu3MeasureReportBuilder implements MeasureReportBuilder<Measure, 
     }
 
     // This is some hackery because most of these objects don't implement
-    // hashCode or equals, meaning it's hard to detect distinct values;
     class ValueWrapper {
         protected Object value;
 
