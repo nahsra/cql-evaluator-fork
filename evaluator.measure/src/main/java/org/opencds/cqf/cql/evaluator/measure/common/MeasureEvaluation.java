@@ -142,7 +142,7 @@ public abstract class MeasureEvaluation<BaseT, MeasureT extends BaseT, MeasureRe
             this.subjectType = subjectIdParts[0];
             parsedSubjectId = subjectIdParts[1];
         } else {
-            this.subjectType = "Patient";
+            this.subjectType = PATIENT_1;
             parsedSubjectId = subjectId;
             logger.info("Could not determine subjectType. Defaulting to Patient");
         }
@@ -227,7 +227,7 @@ public abstract class MeasureEvaluation<BaseT, MeasureT extends BaseT, MeasureRe
 
     @SuppressWarnings("unchecked")
     protected List<String> getAllSubjectIds() {
-        this.subjectType = "Patient";
+        this.subjectType = PATIENT_1;
         List<String> subjectIds = new ArrayList<>();
         Iterable<Object> subjectRetrieve = this.getDataProvider().retrieve(null, null, null, subjectType, null, null,
                 null, null, null, null, null, null);
@@ -237,7 +237,7 @@ public abstract class MeasureEvaluation<BaseT, MeasureT extends BaseT, MeasureRe
 
     @SuppressWarnings("unchecked")
     protected List<String> getPractitionerSubjectIds(String practitionerRef) {
-        this.subjectType = "Patient";
+        this.subjectType = PATIENT_1;
 
         if (practitionerRef == null) {
             return getAllSubjectIds();
@@ -516,4 +516,6 @@ public abstract class MeasureEvaluation<BaseT, MeasureT extends BaseT, MeasureRe
             values.add(item);
         }
     }
+    
+    private static final String PATIENT_1 = "Patient";
 }
